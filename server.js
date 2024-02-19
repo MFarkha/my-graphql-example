@@ -1,6 +1,7 @@
 const express = require('express');
 const { buildSchema } = require('graphql');
-const { createHandler } = require('graphql-http/lib/use/express');
+// const { createHandler } = require('graphql-http/lib/use/express');
+const { createYoga } = require('graphql-yoga');
 
 const PORT = 3000 || process.env.PORT;
 
@@ -11,17 +12,17 @@ const schema = buildSchema(`
     }
 `);
 
-const root = {
-    description: "Red shoes",
-    price: 42.12
-};
+// const root = {
+//     description: "Red shoes",
+//     price: 42.12
+// };
 
 const app = express();
 app.all(
     '/graphql', 
-    createHandler({
+    createYoga({
         schema: schema,
-        rootValue: root,
+        // rootValue: root,
     })
 );
 
