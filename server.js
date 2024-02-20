@@ -1,6 +1,7 @@
-const path = require("path");
+const cors = require("cors");
 const express = require("express");
-const { createYoga } = require("graphql-yoga");
+const { ApolloServer } = require("@apollo/server");
+const { expressMiddleware } = require("@apollo/server/express4");
 const { loadFilesSync } = require("@graphql-tools/load-files");
 const { makeExecutableSchema } = require("@graphql-tools/schema");
 
@@ -14,19 +15,22 @@ const resolversArray = loadFilesSync("**/*", {
   extensions: ["resolvers.js"],
 });
 
-const schema = makeExecutableSchema({
-  typeDefs: typesArray,
-  resolvers: resolversArray,
-});
+const startApolloServer = async () => {
+  const app = express();
+  const schema = makeExecutableSchema({
+    typeDefs: typesArray,
+    resolvers: resolversArray,
+  });
+  const server = new ApolloServer({
+    schema,
+  });
+  await server.start();
+  app.use(cors());
+  app.use(express.json());
+  app.use("/graphql", expressMiddleware(server));
+  app.listen(PORT, () => {
+    console.log("The GraphQL server is listening the port: ", PORT);
+  });
+};
 
-const app = express();
-app.all(
-  "/graphql",
-  createYoga({
-    schema: schema,
-  }),
-);
-
-app.listen(PORT, () => {
-  console.log("The GraphQL server is listening the port: ", PORT);
-});
+startApolloServer();

@@ -8,7 +8,7 @@
 ### GraphQL implementation tools
 
 - schema building module: [graphql](https://www.npmjs.com/package/graphql)
-- enhanced tool: [Apollo](https://www.apollographql.com/)
+- enhanced tool: [@apollo/server](https://www.apollographql.com/)
 - simple server and client: [graphql-http](https://github.com/graphql/graphql-http)
 - 'middle' option: [graphql-yoga](https://the-guild.dev/graphql/yoga-server)
 
