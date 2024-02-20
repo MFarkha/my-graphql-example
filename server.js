@@ -1,32 +1,32 @@
-const express = require('express');
-const { buildSchema } = require('graphql');
-// const { createHandler } = require('graphql-http/lib/use/express');
-const { createYoga } = require('graphql-yoga');
+const path = require("path");
+const express = require("express");
+const { createYoga } = require("graphql-yoga");
+const { loadFilesSync } = require("@graphql-tools/load-files");
+const { makeExecutableSchema } = require("@graphql-tools/schema");
 
 const PORT = 3000 || process.env.PORT;
 
-const schema = buildSchema(`
-    type Query {
-        description: String
-        price: Float
-    }
-`);
+const typesArray = loadFilesSync("**/*", {
+  extensions: ["graphql"],
+});
 
-// const root = {
-//     description: "Red shoes",
-//     price: 42.12
-// };
+const resolversArray = loadFilesSync("**/*", {
+  extensions: ["resolvers.js"],
+});
+
+const schema = makeExecutableSchema({
+  typeDefs: typesArray,
+  resolvers: resolversArray,
+});
 
 const app = express();
 app.all(
-    '/graphql', 
-    createYoga({
-        schema: schema,
-        // rootValue: root,
-    })
+  "/graphql",
+  createYoga({
+    schema: schema,
+  }),
 );
 
-
 app.listen(PORT, () => {
-    console.log('The GraphQL server is listening the port: ', PORT)
-})
+  console.log("The GraphQL server is listening the port: ", PORT);
+});
